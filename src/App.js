@@ -1,10 +1,17 @@
 import './App.css';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+import FrontPage from './pages/frontpage/FrontPage';
 
 function App() {
   return (
-    <div className="App">
-      <h1>InterviewHut</h1>
-    </div>
+    <BrowserRouter>
+        <div>
+            <Switch>
+             <Route path="/" component={FrontPage}/>
+           </Switch>
+        </div> 
+      </BrowserRouter>
   );
 }
 
