@@ -33,7 +33,7 @@ function frontpage() {
             </Container>
             <Container className='frontpage-body'>
                 <Flex bg="#4C96EB" paddingX="100px" h="77vh">
-                    <Container flex="2" paddingTop="250px">
+                    <Container flex="2" paddingTop="200px">
                         <Container fontSize="30px" color="white">
                             The best way to prepare yourself for cracking those interviews.
                         </Container>
@@ -42,7 +42,7 @@ function frontpage() {
                         </Container>
                     </Container>
                     <Container flex="1"/>
-                    <Container flex="2" paddingTop="50px">
+                    <Container flex="2">
                         <Image
                         boxSize="500px"
                         objectFit="cover"
@@ -50,7 +50,6 @@ function frontpage() {
                         alt="error">
                         </Image>
                     </Container>
-
                 </Flex>
             </Container>
         </Container>
