@@ -5,9 +5,9 @@ function frontpage() {
     return (
         <Container>
             <Container className='frontpage-header'>
-                <Box bg="#4C96EB" w="100%" h="50px" paddingTop="20px" color="white">
+                <Box bg="#4C96EB" w="100%" h="20vh" paddingTop="20px" color="white">
                     <Flex paddingX="30px">
-                        <Container flex="15" fontSize="25px">
+                        <Container flex="21" fontSize="25px">
                             <div>
                                 InterviewHut
                             </div>
@@ -24,19 +24,15 @@ function frontpage() {
                         </Container>
                         <Container flex="1">
                             <div>
-                                <Image
-                                borderRadius="full"
-                                boxSize="40px"
-                                srcSet="images/profilepic.jpg"
-                                alt="error"/>
+                                {/* image here */}
                             </div>
                         </Container>
                         
                     </Flex>
                 </Box>
             </Container>
-            <Container className='frontpage-body' height="100%">
-                <Flex bg="#4C96EB" paddingX="100px">
+            <Container className='frontpage-body'>
+                <Flex bg="#4C96EB" paddingX="100px" h="77vh">
                     <Container flex="2" paddingTop="250px">
                         <Container fontSize="30px" color="white">
                             The best way to prepare yourself for cracking those interviews.
