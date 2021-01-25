@@ -1,7 +1,10 @@
 import { Box, Container, Flex, Image } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 import React from 'react';
 
-const frontpage = () => {
+const FrontPage = () => {
+  const history = useHistory();
+
   return (
     <Container>
       <Container className="frontpage-header">
@@ -28,7 +31,14 @@ const frontpage = () => {
             <Container fontSize="30px" color="white">
               The best way to prepare yourself for cracking those interviews.
             </Container>
-            <Container color="#F3CE47" fontSize="30px">
+            <Container
+              style={{ cursor: 'pointer' }}
+              color="#F3CE47"
+              fontSize="30px"
+              onClick={() => {
+                history.push('/login');
+              }}
+            >
               Get Started.
             </Container>
           </Container>
@@ -47,4 +57,4 @@ const frontpage = () => {
   );
 };
 
-export default frontpage;
+export default FrontPage;
