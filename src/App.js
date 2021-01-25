@@ -1,6 +1,8 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import routes from './routes';
+import { Provider } from 'react-redux';
+import store from './store';
 import FrontPage from './pages/frontpage/FrontPage';
 import LoginPage from './pages/loginPage/LoginPage';
 import SignUpPage from './pages/signUpPage/SignUpPage';
@@ -25,15 +27,17 @@ const RenderRoute = (route) => {
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <Switch>
-          {routes.map((route, index) => (
-            <RenderRoute {...route} key={index} />
-          ))}
-        </Switch>
-      </Router>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Router>
+          <Switch>
+            {routes.map((route, index) => (
+              <RenderRoute {...route} key={index} />
+            ))}
+          </Switch>
+        </Router>
+      </div>
+    </Provider>
   );
 }
 

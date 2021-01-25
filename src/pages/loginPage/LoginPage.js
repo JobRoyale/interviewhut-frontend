@@ -1,12 +1,15 @@
 import React from 'react';
 import { Center, Container, Square, Stack } from '@chakra-ui/react';
 import GoogleAuth from '../../components/googleAuth/GoogleAuth';
+import { loginUser, userActionReset } from '../../actions/userActions';
+import { connect } from 'react-redux';
 import './LoginPage.css';
 
-const LoginPage = () => {
+const LoginPage = ({ userData, loginUser, userActionReset }) => {
   const loginRequest = (authData) => {
-    console.log(authData);
+    loginUser(authData);
   };
+
   return (
     <Container>
       <Container className="frontpage-body">
@@ -32,4 +35,10 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+const mapStateToProps = (state) => ({
+  userData: state.userData,
+});
+
+export default connect(mapStateToProps, { loginUser, userActionReset })(
+  LoginPage
+);
