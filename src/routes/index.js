@@ -12,6 +12,12 @@ const routes = [
     needsAuth: false,
   },
   {
+    path: '/dashboard',
+    component: 'DashboardPage',
+    title: 'Dashboard | InterviewHut',
+    needsAuth: true,
+  },
+  {
     path: '/',
     component: 'FrontPage',
     title: 'InterviewHut',

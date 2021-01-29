@@ -36,7 +36,7 @@ const FrontPage = () => {
               color="#F3CE47"
               fontSize="30px"
               onClick={() => {
-                history.push('/login');
+                history.push('/signup');
               }}
             >
               Get Started.

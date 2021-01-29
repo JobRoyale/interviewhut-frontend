@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Center, Container, Square, Stack } from '@chakra-ui/react';
+import { Center, Container, Square, Stack, useToast } from '@chakra-ui/react';
 import GoogleAuth from '../../components/googleAuth/GoogleAuth';
 import { loginUser, userActionReset } from '../../actions/userActions';
 import { connect } from 'react-redux';
@@ -11,7 +11,6 @@ import {
   INVALID,
 } from '../../utils/constants';
 import { useHistory } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
 import './LoginPage.css';
 
 const LoginPage = ({ userData, loginUser, userActionReset }) => {
@@ -22,16 +21,6 @@ const LoginPage = ({ userData, loginUser, userActionReset }) => {
     loginUser(authData);
   };
 
-  const alert = (title, description, status) => {
-    toast({
-      title,
-      description,
-      status,
-      duration: 3000,
-      isClosable: false,
-    });
-  };
-
   // Error handling
   useEffect(() => {
     if (
@@ -40,57 +29,71 @@ const LoginPage = ({ userData, loginUser, userActionReset }) => {
     ) {
       switch (userData.loginData.error.payload.message) {
         case REGISTER:
-          alert(
-            'Error on Login',
-            'You will have to Sign Up first to use InterviewHut!',
-            'error'
-          );
+          toast({
+            title: 'Error on Login',
+            description: 'You will have to Sign Up first to use InterviewHut!',
+            status: 'error',
+            duration: 3000,
+            isClosable: false,
+          });
           userActionReset();
           break;
         case ERROR:
-          alert(
-            'Error on Login',
-            'Some error occurred, we are working to fix it',
-            'error'
-          );
+          toast({
+            title: 'Error on Login',
+            description: 'Some error occurred, we are working to fix it',
+            status: 'error',
+            duration: 3000,
+            isClosable: false,
+          });
           userActionReset();
           break;
         case AUTHERROR:
         case INVALID:
-          alert(
-            'Error on Login',
-            'Some error occurred, please try again later',
-            'error'
-          );
+          toast({
+            title: 'Error on Login',
+            description: 'Some error occurred, please try again later',
+            status: 'error',
+            duration: 3000,
+            isClosable: false,
+          });
           userActionReset();
           break;
         default:
-          alert(
-            'Error on Login',
-            'Some error occurred, please try again later',
-            'error'
-          );
+          toast({
+            title: 'Error on Login',
+            description: 'Some error occurred, please try again later',
+            status: 'error',
+            duration: 3000,
+            isClosable: false,
+          });
           userActionReset();
           break;
       }
     } else if (userData.loginData.error) {
-      alert('Error on Login', userData.loginData.error, 'error');
+      toast({
+        title: 'Error on Login',
+        description: userData.loginData.error,
+        status: 'error',
+        duration: 3000,
+        isClosable: false,
+      });
       userActionReset();
     }
-  }, [userData.loginData.error, userActionReset]);
+  }, [userData.loginData.error, userActionReset, toast]);
 
   useEffect(() => {
     if (userData.loginData.data) {
-      if (userData.loginData.data === LOGIN) {
-        history.push('/');
+      if (userData.loginData.data.payload.message === LOGIN) {
+        history.push('/dashboard');
       }
     }
-  }, [userData.loginData.data, history]);
+  }, [userData.loginData.data, history, toast]);
 
   return (
     <Container>
       <Container className="frontpage-body">
-        <Square bg="#4C96EB" paddingX="100px" h="100vh">
+        <Square bg="#ffffff" paddingX="100px" h="100vh">
           <Center>
             <Stack>
               <center>
@@ -103,6 +106,15 @@ const LoginPage = ({ userData, loginUser, userActionReset }) => {
                   text="Login with Google"
                   getAuthData={loginRequest}
                 />
+                <Container
+                  style={{ cursor: 'pointer' }}
+                  fontSize="16px"
+                  onClick={() => {
+                    history.push('/signup');
+                  }}
+                >
+                  New to InterviewHut? Register Now
+                </Container>
               </center>
             </Stack>
           </Center>
