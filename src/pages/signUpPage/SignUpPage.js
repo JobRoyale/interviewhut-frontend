@@ -28,6 +28,7 @@ const SignUpPage = ({ userData, signUpUser, userActionReset }) => {
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [password, setPassword] = useState('');
   const [authData, setAuthData] = useState({});
+  const [sendSignUpRequest, setSendSignUpRequest] = useState(false);
   const history = useHistory();
   const toast = useToast();
 
@@ -107,6 +108,13 @@ const SignUpPage = ({ userData, signUpUser, userActionReset }) => {
     }
   }, [userData.signUpData.data, history, userActionReset, toast]);
 
+  // Make the signup request to API
+  useEffect(() => {
+    if (sendSignUpRequest) {
+      signUpUser(authData);
+    }
+  }, [sendSignUpRequest, authData, signUpUser]);
+
   let content = (
     <Container>
       <Container className="frontpage-body">
@@ -167,7 +175,7 @@ const SignUpPage = ({ userData, signUpUser, userActionReset }) => {
                           ...prevState,
                           password: password,
                         }));
-                        signUpUser(authData);
+                        setSendSignUpRequest(true);
                       }}
                       isLoading={userData.signUpData.isLoading}
                     >
