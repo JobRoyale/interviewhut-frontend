@@ -6,9 +6,9 @@ const FrontPage = () => {
   const history = useHistory();
 
   return (
-    <Container>
-      <Container className="frontpage-header">
-        <Box bg="#11143C" w="100%" h="8vh" paddingTop="30px" color="white">
+    <div>
+      <div className="frontpage-header">
+        <Box bg="#11143C" w="100%" h="10vh" paddingTop="30px" color="white">
           <Flex paddingX="30px">
             <Container flex="21" fontSize="25px">
               <div>InterviewHut</div>
@@ -24,9 +24,9 @@ const FrontPage = () => {
             </Container>
           </Flex>
         </Box>
-      </Container>
-      <Container className="frontpage-body">
-        <Flex bg="#4C96EB" paddingX="100px" h="88vh">
+      </div>
+      <div className="frontpage-body">
+        <Flex bg="#4C96EB" paddingX="100px" h="90vh">
           <Container flex="2" paddingTop="230px">
             <Container fontSize="30px" color="white">
               The best way to prepare yourself for cracking those interviews.
@@ -52,8 +52,8 @@ const FrontPage = () => {
             ></Image>
           </Container>
         </Flex>
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };
 
