@@ -29,6 +29,14 @@ const RenderRoute = (route) => {
     history.push('/login');
   }
 
+  if (route.component === 'LoginPage' && isAuthenticated()) {
+    history.push('/dashboard');
+  } else if (route.component === 'SignUpPage' && isAuthenticated()) {
+    history.push('/dashboard');
+  } else if (route.component === 'FrontPage' && isAuthenticated()) {
+    history.push('/dashboard');
+  }
+
   return (
     <Route
       exact
