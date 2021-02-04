@@ -1,7 +1,8 @@
 import { Box, Container, Flex, Image} from '@chakra-ui/react'
 import React from 'react'
 
-function frontpage() {
+function Frontpage() {
+
     return (
         <div>
             <div className='frontpage-header'>
@@ -56,4 +57,4 @@ function frontpage() {
     )
 }
 
-export default frontpage
+export default Frontpage
