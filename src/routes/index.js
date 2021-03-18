@@ -18,6 +18,12 @@ const routes = [
     needsAuth: true,
   },
   {
+    path: '/room',
+    component: 'RoomPage',
+    title: 'Room | InterviewHut',
+    needsAuth: true,
+  },
+  {
     path: '/',
     component: 'FrontPage',
     title: 'InterviewHut',
