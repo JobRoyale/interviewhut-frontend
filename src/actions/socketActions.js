@@ -12,16 +12,16 @@ export const connectSocket = () =>(dispatch)=>{
         },
       };
 
-          let socket = io.connect(ENDPOINT, options);
-    socket.on(CONNECTION_ACK, () => {
-      console.log(CONNECTION_ACK);
+     let socket = io.connect("http://localhost:2500", options);
+    socket.on("CONNECTION_ACK", () => {
+      console.log(CONNECTION_ACCEPTED);
       dispatch({
         type: CONNECTION_ACCEPTED,
         payload: socket
       })
     });
-    socket.on(CONNECTION_DENY, (data) => {
-      console.log(CONNECTION_DENY);
+    socket.on("CONNECTION_DENY", (data) => {
+      console.log(CONNECTION_FAILED);
       dispatch(
         {
           type: CONNECTION_FAILED,

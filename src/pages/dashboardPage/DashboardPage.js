@@ -1,7 +1,14 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Box, Container, Flex, Image, Button ,Text} from '@chakra-ui/react';
+import { connect } from 'react-redux';
+import { connectSocket} from '../../actions/socketActions';
 
-const DashboardPage = () => {
+const DashboardPage = ({connectSocket}) => {
+
+  useEffect(()=>{
+    connectSocket();
+  },[]);
+
   return <div>
   <div className="frontpage-header">
     <Box bg="#11143C" w="100%" h="10vh" paddingTop="30px" color="white">
@@ -51,4 +58,10 @@ const DashboardPage = () => {
 </div>;
 };
 
-export default DashboardPage;
+const mapStateToProps = (state) => ({
+  socketData: state.socketData,
+});
+
+export default connect(mapStateToProps, {connectSocket})(
+  DashboardPage
+);
