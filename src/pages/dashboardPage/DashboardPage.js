@@ -2,10 +2,19 @@ import React,{useEffect} from 'react';
 import { Box, Container, Flex, Image, Button ,Text} from '@chakra-ui/react';
 import { connect } from 'react-redux';
 import { connectSocket} from '../../actions/socketActions';
+import {createRoom} from "../../actions/roomActions"; 
 
-const DashboardPage = ({connectSocket}) => {
+const DashboardPage = ({connectSocket, createRoom, socketData}) => {
+
+  const socket = socketData.socket;
+
+  const onClickHandler = () =>{
+    console.log("onclick");
+    createRoom(socket);
+  }
 
   useEffect(()=>{
+    console.log("dashboard");
     connectSocket();
   },[]);
 
@@ -37,7 +46,7 @@ const DashboardPage = ({connectSocket}) => {
         <Container h="5vh">
 
         </Container>
-        <Button>
+        <Button onClick = {onClickHandler}>
            CUSTOM INTERVIEW
         </Button>
       </Container>
@@ -62,6 +71,6 @@ const mapStateToProps = (state) => ({
   socketData: state.socketData,
 });
 
-export default connect(mapStateToProps, {connectSocket})(
+export default connect(mapStateToProps, {connectSocket, createRoom})(
   DashboardPage
 );
