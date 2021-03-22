@@ -18,3 +18,13 @@ export const createRoom = (
       }
     };
   };
+
+  export const joinRoom = (socket, room_id) => {
+    return (dispatch) => {
+      if (socket !== null) {
+        socket.emit('JOIN_ROOM', { room_id }, (data) => {
+          console.log('Join Room', data);
+        });
+      }
+    };
+  };
