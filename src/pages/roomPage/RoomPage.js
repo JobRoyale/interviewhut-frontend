@@ -2,8 +2,9 @@ import React from 'react';
 import { Button, Stack, Flex } from '@chakra-ui/react';
 import RoomMember from '../../components/roomMember/RoomMember';
 import Header from '../../components/header/Header';
+import { connect } from 'react-redux';
 
-const RoomPage = () => {
+const RoomPage = ({ socketData, roomData }) => {
   return (
     <Stack height="100vh" width="100%">
       <Header />
@@ -18,4 +19,9 @@ const RoomPage = () => {
   );
 };
 
-export default RoomPage;
+const mapStateToProps = (state) => ({
+  socketData: state.socketData,
+  roomData: state.roomData,
+});
+
+export default connect(mapStateToProps, {})(RoomPage);
