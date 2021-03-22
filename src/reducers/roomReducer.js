@@ -1,4 +1,9 @@
-import { CREATE_ROOM_SUCCESS, CREATE_ROOM_FAIL } from '../actions/types';
+import {
+  CREATE_ROOM_SUCCESS,
+  CREATE_ROOM_FAIL,
+  JOIN_ROOM_SUCCESS,
+  JOIN_ROOM_FAIL,
+} from '../actions/types';
 
 const initialState = {
   error: '',
@@ -12,6 +17,16 @@ const roomReducer = (state = initialState, action) => {
         room: action.payload,
       };
     case CREATE_ROOM_FAIL:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case JOIN_ROOM_SUCCESS:
+      return {
+        ...state,
+        room: action.payload,
+      };
+    case JOIN_ROOM_FAIL:
       return {
         ...state,
         error: action.payload,
