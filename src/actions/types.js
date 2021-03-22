@@ -8,5 +8,11 @@ export const SIGNUP_LOADING = 'SIGNUP_LOADING';
 export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
 export const SIGNUP_FAIL = 'SIGNUP_FAIL';
 
+//Lobby Action
+export const CONNECTION_FAILED = 'CONNECTION_FAILED';
+export const CONNECTION_ACCEPTED = 'CONNECTION ACCEPTED';
+
 // Reset Action
 export const ACTION_RESET = 'ACTION_RESET';
+
+
