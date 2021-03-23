@@ -3,6 +3,7 @@ import {
   CREATE_ROOM_FAIL,
   JOIN_ROOM_SUCCESS,
   JOIN_ROOM_FAIL,
+  ROOM_UPDATED,
 } from '../actions/types';
 
 const initialState = {
@@ -30,6 +31,11 @@ const roomReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+    case ROOM_UPDATED:
+      return {
+        ...state,
+        room: action.payload,
       };
     default:
       return state;
