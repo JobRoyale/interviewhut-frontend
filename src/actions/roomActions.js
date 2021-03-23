@@ -20,7 +20,7 @@ export const createRoom = (socket) => (dispatch) => {
         if (createRoomData !== null) {
           if (createRoomData !== ERROR_MSG) {
             const room_id = createRoomData.config.id;
-            socket.off.on('ROOM_UPDATED', (data) => {
+            socket.off('ROOM_UPDATED').on('ROOM_UPDATED', (data) => {
               if (data !== null && data.type !== undefined) {
                 dispatch(getRoom(socket, room_id));
               }
@@ -43,7 +43,7 @@ export const joinRoom = (socket, room_id) => (dispatch) => {
     socket.emit('JOIN_ROOM', { room_id }, (joinRoomData) => {
       if (joinRoomData !== null) {
         if (joinRoomData !== ERROR_MSG) {
-          socket.off.on('ROOM_UPDATED', (data) => {
+          socket.off('ROOM_UPDATED').on('ROOM_UPDATED', (data) => {
             if (data !== null && data.type !== undefined) {
               dispatch(getRoom(socket, room_id));
             }
