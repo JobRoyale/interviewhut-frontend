@@ -15,6 +15,7 @@ export const INVALID = 'INVALID DATA IN REQUEST';
 export const LOGOUT = 'SUCCESSFUL LOGOUT';
 export const UPDATE = 'DATA UPDATED';
 export const AVAILABLE = 'DATA UPDATABLE';
+export const ERROR_MSG = 'Some error occured !';
 
 export const SERVER_DOWN =
   'Some error occurred, our team is in the process of fixing it!';
