@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import Peer from 'simple-peer';
 
 const InterviewPage = () => {
-  return <h3>InterviewPage</h3>;
+  return <div></div>;
 };
 
 export default InterviewPage;
