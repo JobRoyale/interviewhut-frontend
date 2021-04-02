@@ -3,17 +3,31 @@ import { Button, Stack, Flex } from '@chakra-ui/react';
 import RoomMember from '../../components/roomMember/RoomMember';
 import Header from '../../components/header/Header';
 import { connect } from 'react-redux';
-import { startInterview } from '../../actions/interviewActions';
+import {
+  startInterview,
+  interviewStarted,
+} from '../../actions/interviewActions';
 import getUserData from '../../utils/getUserData';
 import { useHistory } from 'react-router-dom';
 
-const RoomPage = ({ socketData, roomData, interviewData, startInterview }) => {
+const RoomPage = ({
+  socketData,
+  roomData,
+  interviewData,
+  startInterview,
+  interviewStarted,
+}) => {
   const history = useHistory();
   const socket = socketData.socket;
   const username = getUserData().username;
 
   let roomMemberCards = null;
   let roomMembers;
+
+  useEffect(() => {
+    interviewStarted(socket);
+    /* eslint-disable */
+  }, []);
 
   useEffect(() => {
     if (interviewData.interview) {
@@ -62,4 +76,6 @@ const mapStateToProps = (state) => ({
   interviewData: state.interviewData,
 });
 
-export default connect(mapStateToProps, { startInterview })(RoomPage);
+export default connect(mapStateToProps, { startInterview, interviewStarted })(
+  RoomPage
+);

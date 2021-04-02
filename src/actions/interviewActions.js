@@ -10,3 +10,14 @@ export const startInterview = (socket) => (dispatch) => {
     }
   });
 };
+
+export const interviewStarted = (socket) => (dispatch) => {
+  socket.off('COMPETITION_STARTED').on('COMPETITION_STARTED', (data) => {
+    if (data) {
+      dispatch({
+        type: START_INTERVIEW_SUCCESS,
+        payload: data.returnObj,
+      });
+    }
+  });
+};
