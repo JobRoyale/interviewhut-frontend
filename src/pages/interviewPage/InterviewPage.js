@@ -1,9 +1,10 @@
+/* eslint-disable */
 import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
 
-const InterviewPage = ({ socketData }) => {
+const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
 
   // My details
@@ -18,6 +19,8 @@ const InterviewPage = ({ socketData }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
 
+  const [answerTheCall, setAnswerTheCall] = useState(false);
+
   const myVideo = useRef();
   const otherMemberVideo = useRef();
   const connectionRef = useRef();
@@ -30,12 +33,31 @@ const InterviewPage = ({ socketData }) => {
         myVideo.current.srcObject = stream;
       });
 
-    socket.on('callUser', (data) => {
+    socket.off('callUser').on('callUser', (data) => {
+      console.log(data);
       setReceivingCall(true);
       setCallerUsername(data.from);
       setCallerSignal(data.signal);
+      setAnswerTheCall(true);
     });
   }, [socket]);
+
+  useEffect(() => {
+    // If user is admin then call the other person
+    if (roomData.room.config.admin === myUsername) {
+      for (let team in roomData.room.teams) {
+        if (team !== myUsername) {
+          callUser(team);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (answerTheCall) {
+      answerCall();
+    }
+  }, [answerTheCall]);
 
   const callUser = (username) => {
     const peer = new Peer({
@@ -98,12 +120,25 @@ const InterviewPage = ({ socketData }) => {
           />
         )}
       </div>
+      <div className="video">
+        {callAccepted && !callEnded ? (
+          <video
+            playsInline
+            ref={otherMemberVideo}
+            autoPlay
+            style={{ width: '300px' }}
+          />
+        ) : (
+          <h1>Joel</h1>
+        )}
+      </div>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
   socketData: state.socketData,
+  roomData: state.roomData,
 });
 
 export default connect(mapStateToProps, {})(InterviewPage);
