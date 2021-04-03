@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
+import { Button } from '@chakra-ui/button';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
@@ -18,8 +19,6 @@ const InterviewPage = ({ socketData, roomData }) => {
   const [receivingCall, setReceivingCall] = useState(false);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
-
-  const [answerTheCall, setAnswerTheCall] = useState(false);
 
   const myVideo = useRef();
   const otherMemberVideo = useRef();
@@ -38,26 +37,8 @@ const InterviewPage = ({ socketData, roomData }) => {
       setReceivingCall(true);
       setCallerUsername(data.from);
       setCallerSignal(data.signal);
-      setAnswerTheCall(true);
     });
   }, [socket]);
-
-  useEffect(() => {
-    // If user is admin then call the other person
-    if (roomData.room.config.admin === myUsername) {
-      for (let team in roomData.room.teams) {
-        if (team !== myUsername) {
-          callUser(team);
-        }
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (answerTheCall) {
-      answerCall();
-    }
-  }, [answerTheCall]);
 
   const callUser = (username) => {
     const peer = new Peer({
@@ -108,11 +89,25 @@ const InterviewPage = ({ socketData, roomData }) => {
     connectionRef.current.destroy();
   };
 
-  console.log('callAccepted', callAccepted)
-  console.log('callEnded', callEnded)
+  const handleStartVideoCall = () => {
+    if (roomData.room.config.admin === myUsername) {
+      for (let team in roomData.room.teams) {
+        if (team !== myUsername) {
+          callUser(team);
+        }
+      }
+    }
+  };
 
   return (
     <div>
+      {roomData.room.config.admin === myUsername &&
+      !callAccepted &&
+      !callEnded ? (
+        <Button width="20%" onClick={handleStartVideoCall}>
+          Start video call
+        </Button>
+      ) : null}
       <div className="video">
         {myStream && (
           <video
@@ -130,8 +125,18 @@ const InterviewPage = ({ socketData, roomData }) => {
             playsInline
             ref={otherMemberVideo}
             autoPlay
-            style={{ width: '300px', border: 'dotted 2px red' }}
+            style={{ width: '300px' }}
           />
+        ) : null}
+      </div>
+      <div>
+        {receivingCall && !callAccepted ? (
+          <div className="caller">
+            <h1>{callerUsername} is calling...</h1>
+            <Button width="20%" onClick={answerCall}>
+              Answer
+            </Button>
+          </div>
         ) : null}
       </div>
     </div>
