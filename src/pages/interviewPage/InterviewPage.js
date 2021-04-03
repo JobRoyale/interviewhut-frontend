@@ -4,9 +4,23 @@ import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
 import { Button } from '@chakra-ui/button';
+import { Flex } from '@chakra-ui/layout';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from '@chakra-ui/react';
+import Header from '../../components/header/Header';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
+
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = React.useRef();
 
   // My details
   const myUsername = getUserData().username;
@@ -33,10 +47,10 @@ const InterviewPage = ({ socketData, roomData }) => {
       });
 
     socket.off('callUser').on('callUser', (data) => {
-      console.log(data);
       setReceivingCall(true);
       setCallerUsername(data.from);
       setCallerSignal(data.signal);
+      setIsOpen(true);
     });
   }, [socket]);
 
@@ -100,46 +114,76 @@ const InterviewPage = ({ socketData, roomData }) => {
   };
 
   return (
-    <div>
-      {roomData.room.config.admin === myUsername &&
-      !callAccepted &&
-      !callEnded ? (
-        <Button width="20%" onClick={handleStartVideoCall}>
-          Start video call
-        </Button>
-      ) : null}
-      <div className="video">
-        {myStream && (
-          <video
-            playsInline
-            muted
-            ref={myVideo}
-            autoPlay
-            style={{ width: '300px' }}
-          />
-        )}
-      </div>
-      <div className="video">
-        {callAccepted && !callEnded ? (
-          <video
-            playsInline
-            ref={otherMemberVideo}
-            autoPlay
-            style={{ width: '300px' }}
-          />
-        ) : null}
-      </div>
-      <div>
-        {receivingCall && !callAccepted ? (
-          <div className="caller">
-            <h1>{callerUsername} is calling...</h1>
-            <Button width="20%" onClick={answerCall}>
-              Answer
-            </Button>
+    <Flex flexDirection="column" h="100vh">
+      <Header />
+      <Flex>
+        <Flex height="100%" width="80%">
+          Typing area
+        </Flex>
+        <Flex height="100%" width="20%" flexDirection="column">
+          <Flex width="100%">
+            {myStream && (
+              <video
+                playsInline
+                muted
+                ref={myVideo}
+                autoPlay
+                style={{ width: '100%' }}
+              />
+            )}
+          </Flex>
+          {'joelmathewkoshy' === myUsername && !callAccepted && !callEnded ? (
+            <Flex
+              width="100%"
+              padding="10px"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Button width="50%" onClick={handleStartVideoCall}>
+                Start video call
+              </Button>
+            </Flex>
+          ) : null}
+          <Flex>
+            {callAccepted && !callEnded ? (
+              <video
+                playsInline
+                ref={otherMemberVideo}
+                autoPlay
+                style={{ width: '300px' }}
+              />
+            ) : null}
+          </Flex>
+          <div>
+            {receivingCall && !callAccepted ? (
+              <AlertDialog
+                isOpen={isOpen}
+                leastDestructiveRef={cancelRef}
+                onClose={onClose}
+              >
+                <AlertDialogOverlay>
+                  <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      Video Call
+                    </AlertDialogHeader>
+
+                    <AlertDialogBody>
+                      {callerUsername} requested for video access
+                    </AlertDialogBody>
+
+                    <AlertDialogFooter>
+                      <Button colorScheme="green" onClick={answerCall} ml={3}>
+                        Accept
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            ) : null}
           </div>
-        ) : null}
-      </div>
-    </div>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 };
 
