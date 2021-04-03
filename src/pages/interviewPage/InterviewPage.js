@@ -75,7 +75,8 @@ const InterviewPage = ({ socketData, roomData }) => {
     peer.on('stream', (stream) => {
       otherMemberVideo.current.srcObject = stream;
     });
-    socket.on('callAccepted', (signal) => {
+
+    socket.off('callAccepted').on('callAccepted', (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -107,6 +108,9 @@ const InterviewPage = ({ socketData, roomData }) => {
     connectionRef.current.destroy();
   };
 
+  console.log('callAccepted', callAccepted)
+  console.log('callEnded', callEnded)
+
   return (
     <div>
       <div className="video">
@@ -126,11 +130,9 @@ const InterviewPage = ({ socketData, roomData }) => {
             playsInline
             ref={otherMemberVideo}
             autoPlay
-            style={{ width: '300px' }}
+            style={{ width: '300px', border: 'dotted 2px red' }}
           />
-        ) : (
-          <h1>Joel</h1>
-        )}
+        ) : null}
       </div>
     </div>
   );
