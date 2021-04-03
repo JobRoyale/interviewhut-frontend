@@ -13,6 +13,7 @@ import LoginPage from './pages/loginPage/LoginPage';
 import SignUpPage from './pages/signUpPage/SignUpPage';
 import DashboardPage from './pages/dashboardPage/DashboardPage';
 import RoomPage from './pages/roomPage/RoomPage';
+import InterviewPage from './pages/interviewPage/InterviewPage';
 import isAuthenticated from './utils/isAuthenticated';
 
 const componentRegistry = {
@@ -21,6 +22,7 @@ const componentRegistry = {
   SignUpPage: SignUpPage,
   DashboardPage: DashboardPage,
   RoomPage: RoomPage,
+  InterviewPage: InterviewPage,
 };
 
 const RenderRoute = (route) => {

@@ -17,11 +17,11 @@ export const JOIN_ROOM_FAIL = 'JOIN_ROOM_FAIL';
 
 export const ROOM_UPDATED = 'ROOM_UPDATED';
 
+export const START_INTERVIEW_SUCCESS = 'START_INTERVIEW_SUCCESS';
+
 //Lobby Action
 export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 export const CONNECTION_ACCEPTED = 'CONNECTION ACCEPTED';
 
 // Reset Action
 export const ACTION_RESET = 'ACTION_RESET';
-
-
