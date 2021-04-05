@@ -1,58 +1,39 @@
-import { Box, Container, Flex, Image } from '@chakra-ui/react';
+import { Button, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import React from 'react';
+import Header from '../../components/header/Header';
 
 const FrontPage = () => {
   const history = useHistory();
 
   return (
     <div>
-      <div className="frontpage-header">
-        <Box bg="#11143C" w="100%" h="10vh" paddingTop="30px" color="white">
-          <Flex paddingX="30px">
-            <Container flex="21" fontSize="25px">
-              <div>InterviewHut</div>
-            </Container>
-            <Container flex="2">
-              <div>About us</div>
-            </Container>
-            <Container flex="2">
-              <div>Contact us</div>
-            </Container>
-            <Container flex="1">
-              <div>{/* image here */}</div>
-            </Container>
-          </Flex>
-        </Box>
-      </div>
-      <div className="frontpage-body">
-        <Flex bg="#4C96EB" paddingX="100px" h="90vh">
-          <Container flex="2" paddingTop="230px">
-            <Container fontSize="30px" color="white">
-              The best way to prepare yourself for cracking those interviews.
-            </Container>
-            <Container
-              style={{ cursor: 'pointer' }}
-              color="#F3CE47"
-              fontSize="30px"
-              onClick={() => {
-                history.push('/signup');
-              }}
-            >
-              Get Started.
-            </Container>
-          </Container>
-          <Container flex="1" />
-          <Container flex="2" paddingTop="20px">
-            <Image
-              boxSize="500px"
-              objectFit="cover"
-              src="images/frontpage_illustration.png"
-              alt="error"
-            ></Image>
-          </Container>
-        </Flex>
-      </div>
+      <Header loggedIn={false} />
+      <Flex
+        bg="#4C96EB"
+        h="91vh"
+        alignItems="center"
+        justifyContent="space-between"
+        padding="150px"
+      >
+        <Stack>
+          <Text fontSize="3xl" color="white">
+            The best way to prepare yourself for cracking those interviews.
+          </Text>
+          <Button
+            width="50%"
+            colorScheme="yellow"
+            onClick={() => history.push('/signup')}
+          >
+            Get Started
+          </Button>
+        </Stack>
+        <Image
+          boxSize="500px"
+          src="images/frontpage_illustration.png"
+          alt="mock interview"
+        ></Image>
+      </Flex>
     </div>
   );
 };
