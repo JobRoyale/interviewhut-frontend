@@ -15,8 +15,8 @@ import {
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
 
-import { createEditor } from 'slate'
-import { Slate, Editable, withReact } from 'slate-react'
+import { createEditor } from 'slate';
+import { Slate, Editable, withReact } from 'slate-react';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
@@ -65,6 +65,12 @@ const InterviewPage = ({ socketData, roomData }) => {
       setCallerSignal(data.signal);
       setIsOpen(true);
     });
+
+    socket.on("RCV_MSG", data =>{
+      console.log("recieved data:",data);
+      setValue(data);
+    });
+
   }, [socket]);
 
   const callUser = (username) => {
@@ -134,10 +140,18 @@ const InterviewPage = ({ socketData, roomData }) => {
         <Slate
           editor={editor}
           value={value}
-          onChange={newValue => setValue(newValue)}
+          onChange={newValue => {
+            setValue(newValue);
+
+            socket.emit('SEND_MSG', { content: value}, (data) => {
+              console.log('everyone self send', data);
+            });
+
+            console.log("sent msg:", value);
+          }}
         >
-      <Editable />
-    </Slate>
+          <Editable />
+        </Slate>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
@@ -212,3 +226,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {})(InterviewPage);
+
