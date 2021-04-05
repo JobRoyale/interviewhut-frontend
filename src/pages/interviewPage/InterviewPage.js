@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
@@ -15,8 +15,21 @@ import {
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
 
+import { createEditor } from 'slate'
+import { Slate, Editable, withReact } from 'slate-react'
+
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
+
+  const editor = useMemo(() => withReact(createEditor()), []);
+  // Add the initial value when setting up our state.
+  const [value, setValue] = useState([
+    {
+      type: 'paragraph',
+      children: [{ text: 'A line of text in a paragraph.' }],
+    },
+  ]);
+
 
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
@@ -118,7 +131,13 @@ const InterviewPage = ({ socketData, roomData }) => {
       <Header />
       <Flex>
         <Flex height="100%" width="80%">
-          Typing area
+        <Slate
+          editor={editor}
+          value={value}
+          onChange={newValue => setValue(newValue)}
+        >
+      <Editable />
+    </Slate>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
