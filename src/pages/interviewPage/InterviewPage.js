@@ -14,9 +14,12 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
+import { useHistory } from 'react-router-dom';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
+
+  const history = useHistory();
 
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
@@ -38,20 +41,26 @@ const InterviewPage = ({ socketData, roomData }) => {
   const otherMemberVideo = useRef();
   const connectionRef = useRef();
 
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setMyStream(stream);
-        myVideo.current.srcObject = stream;
-      });
+  if (!socket) {
+    history.push('/dashboard');
+  }
 
-    socket.off('callUser').on('callUser', (data) => {
-      setReceivingCall(true);
-      setCallerUsername(data.from);
-      setCallerSignal(data.signal);
-      setIsOpen(true);
-    });
+  useEffect(() => {
+    if (socket) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          setMyStream(stream);
+          myVideo.current.srcObject = stream;
+        });
+
+      socket.off('callUser').on('callUser', (data) => {
+        setReceivingCall(true);
+        setCallerUsername(data.from);
+        setCallerSignal(data.signal);
+        setIsOpen(true);
+      });
+    }
   }, [socket]);
 
   const callUser = (username) => {

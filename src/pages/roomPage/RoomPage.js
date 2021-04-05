@@ -24,8 +24,14 @@ const RoomPage = ({
   let roomMemberCards = null;
   let roomMembers;
 
+  if (!socket) {
+    history.push('/dashboard');
+  }
+
   useEffect(() => {
-    interviewStarted(socket);
+    if (socket) {
+      interviewStarted(socket);
+    }
     /* eslint-disable */
   }, []);
 
@@ -60,10 +66,12 @@ const RoomPage = ({
       <Header />
       <Stack height="100%" justifyContent="center" alignItems="center">
         <Flex>{roomMemberCards}</Flex>
-        {roomData.room.config.admin === username ? (
-          <Button width="20%" onClick={handleStartInterview}>
-            Start Interview
-          </Button>
+        {socket ? (
+          roomData.room.config.admin === username ? (
+            <Button width="20%" onClick={handleStartInterview}>
+              Start Interview
+            </Button>
+          ) : null
         ) : null}
       </Stack>
     </Stack>
