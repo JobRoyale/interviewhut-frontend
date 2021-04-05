@@ -16,6 +16,7 @@ const Header = (props) => {
       padding="18px"
       alignItems="center"
       justifyContent="space-between"
+      boxShadow="0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19)"
     >
       <Text color="black" fontSize="2xl">
         InterviewHut
@@ -38,13 +39,15 @@ const Header = (props) => {
   if (loggedIn) {
     content = (
       <Flex
+        height="9vh"
         width="100%"
-        bg="#4C96EB"
+        bg="white"
         padding="18px"
         alignItems="center"
         justifyContent="space-between"
+        boxShadow="0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.19)"
       >
-        <Text color="white" fontSize="2xl">
+        <Text color="black" fontSize="2xl">
           InterviewHut
         </Text>
         <ProfileButton />
