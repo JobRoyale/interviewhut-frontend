@@ -14,6 +14,7 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
+import SlateEditor from '../../components/slateEditor/SlateEditor';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
@@ -39,19 +40,23 @@ const InterviewPage = ({ socketData, roomData }) => {
   const connectionRef = useRef();
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setMyStream(stream);
-        myVideo.current.srcObject = stream;
-      });
-
-    socket.off('callUser').on('callUser', (data) => {
-      setReceivingCall(true);
-      setCallerUsername(data.from);
-      setCallerSignal(data.signal);
-      setIsOpen(true);
-    });
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true, audio: true })
+    //   .then((stream) => {
+    //     setMyStream(stream);
+    //     myVideo.current.srcObject = stream;
+    //   });
+    // socket.off('callUser').on('callUser', (data) => {
+    //   setReceivingCall(true);
+    //   setCallerUsername(data.from);
+    //   setCallerSignal(data.signal);
+    //   setIsOpen(true);
+    // });
+    // socket.on('RCV_MSG', (data) => {
+    //   console.log(data);
+    //   console.log('recieved data:', data.content[0].children[0].text);
+    //   setValue(data.content);
+    // });
   }, [socket]);
 
   const callUser = (username) => {
@@ -117,8 +122,8 @@ const InterviewPage = ({ socketData, roomData }) => {
     <Flex flexDirection="column" h="100vh">
       <Header />
       <Flex>
-        <Flex height="100%" width="80%">
-          Typing area
+        <Flex height="100%" width="80%" flexDirection="column">
+          <SlateEditor />
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
