@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useRef, useEffect, useState, useMemo, useCallback} from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
@@ -14,21 +14,10 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
-
-import { createEditor , Editor, Transforms, Text} from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
+import SlateEditor from '../../components/slateEditor/SlateEditor';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
-
-  const editor = useMemo(() => withReact(createEditor()), []);
-  // Add the initial value when setting up our state.
-  const [value, setValue] = useState([
-    {
-      type: 'paragraph',
-      children: [{ text: 'A line of text in a paragraph.' }],
-    },
-  ]);
 
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
@@ -51,27 +40,23 @@ const InterviewPage = ({ socketData, roomData }) => {
   const connectionRef = useRef();
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setMyStream(stream);
-        myVideo.current.srcObject = stream;
-      });
-
-    socket.off('callUser').on('callUser', (data) => {
-      setReceivingCall(true);
-      setCallerUsername(data.from);
-      setCallerSignal(data.signal);
-      setIsOpen(true);
-    });
-
-    socket.on("RCV_MSG", data =>{
-      console.log(data);
-      console.log("recieved data:",data.content[0].children[0].text);
-      setValue(data.content);
-    });
-
-  
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true, audio: true })
+    //   .then((stream) => {
+    //     setMyStream(stream);
+    //     myVideo.current.srcObject = stream;
+    //   });
+    // socket.off('callUser').on('callUser', (data) => {
+    //   setReceivingCall(true);
+    //   setCallerUsername(data.from);
+    //   setCallerSignal(data.signal);
+    //   setIsOpen(true);
+    // });
+    // socket.on('RCV_MSG', (data) => {
+    //   console.log(data);
+    //   console.log('recieved data:', data.content[0].children[0].text);
+    //   setValue(data.content);
+    // });
   }, [socket]);
 
   const callUser = (username) => {
@@ -133,140 +118,12 @@ const InterviewPage = ({ socketData, roomData }) => {
     }
   };
 
-  const CustomEditor = {
-    isBoldMarkActive(editor) {
-      const [match] = Editor.nodes(editor, {
-        match: n => n.bold === true,
-        universal: true,
-      })
-  
-      return !!match
-    },
-  
-    isCodeBlockActive(editor) {
-      const [match] = Editor.nodes(editor, {
-        match: n => n.type === 'code',
-      })
-  
-      return !!match
-    },
-  
-    toggleBoldMark(editor) {
-      const isActive = CustomEditor.isBoldMarkActive(editor)
-      Transforms.setNodes(
-        editor,
-        { bold: isActive ? null : true },
-        { match: n => Text.isText(n), split: true }
-      )
-    },
-  
-    toggleCodeBlock(editor) {
-      const isActive = CustomEditor.isCodeBlockActive(editor)
-      Transforms.setNodes(
-        editor,
-        { type: isActive ? null : 'code' },
-        { match: n => Editor.isBlock(editor, n) }
-      )
-    },
-  }
-
-  const DefaultElement = props => {
-    return <p {...props.attributes}>{props.children}</p>
-  }
-
-  const CodeElement = props => {
-    return (
-      <pre {...props.attributes}>
-        <code>{props.children}</code>
-      </pre>
-    )
-  }
-
-  const renderElement = useCallback(props => {
-    switch (props.element.type) {
-      case 'code':
-        return <CodeElement {...props} />
-      default:
-        return <DefaultElement {...props} />
-    }
-  }, [])
-
-  const Leaf = props => {
-    return (
-      <span
-        {...props.attributes}
-        style={{ fontWeight: props.leaf.bold ? 'bold' : 'normal' }}
-      >
-        {props.children}
-      </span>
-    )
-  }
-
-  const renderLeaf = useCallback(props => {
-    return <Leaf {...props} />
-  }, [])
-
   return (
     <Flex flexDirection="column" h="100vh">
       <Header />
       <Flex>
-        <Flex height="100%" width="80%">
-        <Slate
-          editor={editor}
-          value={value}
-          onChange={newValue => {
-            setValue(newValue);
-
-            socket.emit('SEND_MSG', { content: value}, (data) => {
-              console.log('everyone self send', data);
-            });
-
-            console.log("sent msg:", value);
-          }}
-        >
-        <div>
-          <Button
-            onMouseDown={event => {
-              event.preventDefault()
-              CustomEditor.toggleBoldMark(editor)
-            }}
-          >
-            Bold
-          </Button>
-          <Button
-            onMouseDown={event => {
-              event.preventDefault()
-              CustomEditor.toggleCodeBlock(editor)
-            }}
-          >
-            Code
-          </Button>
-        </div>
-        <div>
-        <Editable 
-          renderElement = {renderElement}
-          renderLeaf={renderLeaf}
-          onKeyDown={event => {
-            if (!event.ctrlKey) {
-              return
-            }
-  
-            switch (event.key) {
-              case '`': {
-                event.preventDefault()
-                CustomEditor.toggleCodeBlock(editor)
-                break
-              }
-  
-              case 'b': {
-                event.preventDefault()
-                CustomEditor.toggleBoldMark(editor)
-                break
-              }
-            }
-          }}/>
-          </div>
-        </Slate>
+        <Flex height="100%" width="80%" flexDirection="column">
+          <SlateEditor />
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
@@ -341,4 +198,3 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {})(InterviewPage);
-
