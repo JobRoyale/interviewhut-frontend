@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback} from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
 
-import { createEditor } from 'slate';
+import { createEditor , Editor, Transforms, Text} from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 
 const InterviewPage = ({ socketData, roomData }) => {
@@ -133,6 +133,79 @@ const InterviewPage = ({ socketData, roomData }) => {
     }
   };
 
+  const CustomEditor = {
+    isBoldMarkActive(editor) {
+      const [match] = Editor.nodes(editor, {
+        match: n => n.bold === true,
+        universal: true,
+      })
+  
+      return !!match
+    },
+  
+    isCodeBlockActive(editor) {
+      const [match] = Editor.nodes(editor, {
+        match: n => n.type === 'code',
+      })
+  
+      return !!match
+    },
+  
+    toggleBoldMark(editor) {
+      const isActive = CustomEditor.isBoldMarkActive(editor)
+      Transforms.setNodes(
+        editor,
+        { bold: isActive ? null : true },
+        { match: n => Text.isText(n), split: true }
+      )
+    },
+  
+    toggleCodeBlock(editor) {
+      const isActive = CustomEditor.isCodeBlockActive(editor)
+      Transforms.setNodes(
+        editor,
+        { type: isActive ? null : 'code' },
+        { match: n => Editor.isBlock(editor, n) }
+      )
+    },
+  }
+
+  const DefaultElement = props => {
+    return <p {...props.attributes}>{props.children}</p>
+  }
+
+  const CodeElement = props => {
+    return (
+      <pre {...props.attributes}>
+        <code>{props.children}</code>
+      </pre>
+    )
+  }
+
+  const renderElement = useCallback(props => {
+    switch (props.element.type) {
+      case 'code':
+        return <CodeElement {...props} />
+      default:
+        return <DefaultElement {...props} />
+    }
+  }, [])
+
+  const Leaf = props => {
+    return (
+      <span
+        {...props.attributes}
+        style={{ fontWeight: props.leaf.bold ? 'bold' : 'normal' }}
+      >
+        {props.children}
+      </span>
+    )
+  }
+
+  const renderLeaf = useCallback(props => {
+    return <Leaf {...props} />
+  }, [])
+
   return (
     <Flex flexDirection="column" h="100vh">
       <Header />
@@ -151,7 +224,48 @@ const InterviewPage = ({ socketData, roomData }) => {
             console.log("sent msg:", value);
           }}
         >
-          <Editable />
+        <div>
+          <Button
+            onMouseDown={event => {
+              event.preventDefault()
+              CustomEditor.toggleBoldMark(editor)
+            }}
+          >
+            Bold
+          </Button>
+          <Button
+            onMouseDown={event => {
+              event.preventDefault()
+              CustomEditor.toggleCodeBlock(editor)
+            }}
+          >
+            Code
+          </Button>
+        </div>
+        <div>
+        <Editable 
+          renderElement = {renderElement}
+          renderLeaf={renderLeaf}
+          onKeyDown={event => {
+            if (!event.ctrlKey) {
+              return
+            }
+  
+            switch (event.key) {
+              case '`': {
+                event.preventDefault()
+                CustomEditor.toggleCodeBlock(editor)
+                break
+              }
+  
+              case 'b': {
+                event.preventDefault()
+                CustomEditor.toggleBoldMark(editor)
+                break
+              }
+            }
+          }}/>
+          </div>
         </Slate>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
