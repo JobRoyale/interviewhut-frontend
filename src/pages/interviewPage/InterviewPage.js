@@ -54,7 +54,6 @@ const InterviewPage = ({ socketData, roomData }) => {
           setMyStream(stream);
           myVideo.current.srcObject = stream;
         });
-
       socket.off('callUser').on('callUser', (data) => {
         setReceivingCall(true);
         setCallerUsername(data.from);
@@ -124,11 +123,19 @@ const InterviewPage = ({ socketData, roomData }) => {
   };
 
   return (
-    <Flex flexDirection="column" h="100vh">
-      <Header />
-      <Flex>
-        <Flex height="100%" width="80%" flexDirection="column">
-          <SlateEditor />
+    <div>
+      <Header loggedIn={true} />
+      <Flex h="91vh" bgColor="#dde5eb">
+        <Flex
+          height="100%"
+          width="80%"
+          flexDirection="column"
+          bgColor="#dde5eb"
+          padding="30px"
+        >
+          <Flex flexDirection="column" bgColor="white" height="100%">
+            <SlateEditor />
+          </Flex>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
@@ -142,15 +149,37 @@ const InterviewPage = ({ socketData, roomData }) => {
               />
             )}
           </Flex>
-          {'joelmathewkoshy' === myUsername && !callAccepted && !callEnded ? (
+          {roomData.room.config.admin === myUsername &&
+          !callAccepted &&
+          !callEnded ? (
             <Flex
               width="100%"
-              padding="10px"
+              padding="5px"
               alignItems="center"
               justifyContent="center"
             >
-              <Button width="50%" onClick={handleStartVideoCall}>
+              <Button
+                width="70%"
+                onClick={handleStartVideoCall}
+                colorScheme="blue"
+              >
                 Start video call
+              </Button>
+            </Flex>
+          ) : null}
+          {roomData.room.config.admin === myUsername ? (
+            <Flex
+              width="100%"
+              padding="5px"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Button
+                width="70%"
+                onClick={handleStartVideoCall}
+                colorScheme="red"
+              >
+                End Interview
               </Button>
             </Flex>
           ) : null}
@@ -193,7 +222,7 @@ const InterviewPage = ({ socketData, roomData }) => {
           </div>
         </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 };
 
