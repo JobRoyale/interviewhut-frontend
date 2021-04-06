@@ -30,7 +30,6 @@ const InterviewPage = ({ socketData, roomData }) => {
     },
   ]);
 
-
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = React.useRef();
@@ -67,10 +66,12 @@ const InterviewPage = ({ socketData, roomData }) => {
     });
 
     socket.on("RCV_MSG", data =>{
-      console.log("recieved data:",data);
-      setValue(data);
+      console.log(data);
+      console.log("recieved data:",data.content[0].children[0].text);
+      setValue(data.content);
     });
 
+  
   }, [socket]);
 
   const callUser = (username) => {
