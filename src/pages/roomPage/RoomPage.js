@@ -62,19 +62,36 @@ const RoomPage = ({
   };
 
   return (
-    <Stack height="100vh" width="100%">
-      <Header />
-      <Stack height="100%" justifyContent="center" alignItems="center">
-        <Flex>{roomMemberCards}</Flex>
-        {socket ? (
-          roomData.room.config.admin === username ? (
-            <Button width="20%" onClick={handleStartInterview}>
-              Start Interview
-            </Button>
-          ) : null
-        ) : null}
-      </Stack>
-    </Stack>
+    <div>
+      <Header loggedIn={true} />
+      <Flex
+        bgColor="#dde5eb"
+        height="91vh"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Flex
+          flexDirection="column"
+          width="70%"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Flex>{roomMemberCards}</Flex>
+          {socket ? (
+            roomData.room.config.admin === username ? (
+              <Button
+                width="40%"
+                colorScheme="blue"
+                onClick={handleStartInterview}
+              >
+                Start Interview
+              </Button>
+            ) : null
+          ) : null}
+        </Flex>
+        <Flex width="30%" bgColor="red" height="91vh"></Flex>
+      </Flex>
+    </div>
   );
 };
 
