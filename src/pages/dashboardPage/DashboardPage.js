@@ -62,7 +62,7 @@ const DashboardPage = ({
         <Stack align="center" boxSize="45%" marginRight="50px">
           <Text fontSize="2xl">
             Ace your interviews today! Create a room, invite an interviewer to
-            join and conduct a mock interview.
+            join and conduct a mock interview!
           </Text>
           <Input
             placeholder="Join an interview room with a room code"
@@ -83,7 +83,7 @@ const DashboardPage = ({
               <ModalBody>
                 By creating a mock interview room you will be able to invite an
                 interviewer or friend to join as an interviewer to conduct a
-                mock interview!
+                mock interview.
               </ModalBody>
 
               <ModalFooter>
