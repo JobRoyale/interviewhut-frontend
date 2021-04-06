@@ -174,11 +174,7 @@ const InterviewPage = ({ socketData, roomData }) => {
               alignItems="center"
               justifyContent="center"
             >
-              <Button
-                width="70%"
-                onClick={handleStartVideoCall}
-                colorScheme="red"
-              >
+              <Button width="70%" colorScheme="red">
                 End Interview
               </Button>
             </Flex>
