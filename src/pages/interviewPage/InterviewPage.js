@@ -3,9 +3,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
 import getUserData from '../../utils/getUserData';
-import { Button } from '@chakra-ui/button';
-import { Flex } from '@chakra-ui/layout';
 import {
+  Text,
+  Button,
+  Flex,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -16,6 +17,7 @@ import {
 import Header from '../../components/header/Header';
 import { useHistory } from 'react-router-dom';
 import SlateEditor from '../../components/slateEditor/SlateEditor';
+import Timer from '../../components/timer/Timer';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
@@ -138,6 +140,10 @@ const InterviewPage = ({ socketData, roomData }) => {
           </Flex>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
+          <Flex flexDirection="column" padding="10px">
+            <Text fontSize="md">Time left for interview</Text>
+            <Timer milliseconds="2700000" />
+          </Flex>
           <Flex width="100%">
             {myStream && (
               <video
@@ -167,6 +173,16 @@ const InterviewPage = ({ socketData, roomData }) => {
               </Button>
             </Flex>
           ) : null}
+          <Flex>
+            {callAccepted && !callEnded ? (
+              <video
+                playsInline
+                ref={otherMemberVideo}
+                autoPlay
+                style={{ width: '300px' }}
+              />
+            ) : null}
+          </Flex>
           {roomData.room.config.admin === myUsername ? (
             <Flex
               width="100%"
@@ -179,16 +195,6 @@ const InterviewPage = ({ socketData, roomData }) => {
               </Button>
             </Flex>
           ) : null}
-          <Flex>
-            {callAccepted && !callEnded ? (
-              <video
-                playsInline
-                ref={otherMemberVideo}
-                autoPlay
-                style={{ width: '300px' }}
-              />
-            ) : null}
-          </Flex>
           <div>
             {receivingCall && !callAccepted ? (
               <AlertDialog
