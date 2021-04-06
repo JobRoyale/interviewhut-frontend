@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Stack, Flex } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import RoomMember from '../../components/roomMember/RoomMember';
 import Header from '../../components/header/Header';
 import { connect } from 'react-redux';
@@ -9,6 +9,7 @@ import {
 } from '../../actions/interviewActions';
 import getUserData from '../../utils/getUserData';
 import { useHistory } from 'react-router-dom';
+import RoomChat from './RoomChat';
 
 const RoomPage = ({
   socketData,
@@ -89,7 +90,7 @@ const RoomPage = ({
             ) : null
           ) : null}
         </Flex>
-        <Flex width="30%" bgColor="red" height="91vh"></Flex>
+        <RoomChat />
       </Flex>
     </div>
   );

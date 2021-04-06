@@ -4,10 +4,12 @@ import {
   JOIN_ROOM_SUCCESS,
   JOIN_ROOM_FAIL,
   ROOM_UPDATED,
+  CHAT_SUCCESS,
 } from '../actions/types';
 
 const initialState = {
   error: '',
+  chatMessageList: [],
 };
 
 const roomReducer = (state = initialState, action) => {
@@ -36,6 +38,11 @@ const roomReducer = (state = initialState, action) => {
       return {
         ...state,
         room: action.payload,
+      };
+    case CHAT_SUCCESS:
+      return {
+        ...state,
+        chatMessageList: state.chatMessageList.concat(action.payload),
       };
     default:
       return state;

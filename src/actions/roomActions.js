@@ -4,6 +4,7 @@ import {
   JOIN_ROOM_SUCCESS,
   JOIN_ROOM_FAIL,
   ROOM_UPDATED,
+  CHAT_SUCCESS,
 } from './types';
 import { ERROR_MSG } from '../utils/constants';
 
@@ -70,4 +71,33 @@ export const getRoom = (socket, room_id) => (dispatch) => {
       }
     });
   }
+};
+
+export const sendMessage = (socket, message) => (dispatch) => {
+  if (socket !== null) {
+    socket.emit('SEND_MSG', { content: message }, (data) => {
+      console.log('everyone self send', data);
+      if (data) {
+        dispatch({
+          type: CHAT_SUCCESS,
+          payload: { message: message, source: 'You' },
+        });
+      }
+    });
+  }
+};
+
+export const receiveMessage = (socket) => (dispatch) => {
+  socket.off('RCV_MSG').on('RCV_MSG', (data) => {
+    if (data !== null && data.content !== undefined) {
+      dispatch({
+        type: CHAT_SUCCESS,
+        payload: {
+          message: data.content,
+          source: data.username,
+        },
+      });
+      console.log('chat data', data);
+    }
+  });
 };
