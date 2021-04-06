@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
 import { useHistory } from 'react-router-dom';
+import SlateEditor from '../../components/slateEditor/SlateEditor';
 
 const InterviewPage = ({ socketData, roomData }) => {
   const socket = socketData.socket;
@@ -126,8 +127,8 @@ const InterviewPage = ({ socketData, roomData }) => {
     <Flex flexDirection="column" h="100vh">
       <Header />
       <Flex>
-        <Flex height="100%" width="80%">
-          Typing area
+        <Flex height="100%" width="80%" flexDirection="column">
+          <SlateEditor />
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
           <Flex width="100%">
