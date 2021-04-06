@@ -40,9 +40,6 @@ const ProfileButton = () => {
               {user.username}
             </Text>
           </Flex>
-          <Button colorScheme="teal" variant="ghost" w="100%">
-            Settings
-          </Button>
           <Button colorScheme="red" variant="ghost" w="100%">
             Logout
           </Button>

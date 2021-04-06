@@ -66,7 +66,7 @@ const DashboardPage = ({
           </Text>
           <Input
             placeholder="Join an interview room with a room code"
-            borderColor="blue"
+            borderColor="#4C96EB"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
             onKeyPress={joinRoomHandler}
@@ -83,7 +83,7 @@ const DashboardPage = ({
               <ModalBody>
                 By creating a mock interview room you will be able to invite an
                 interviewer or friend to join as an interviewer to conduct a
-                mock interview
+                mock interview!
               </ModalBody>
 
               <ModalFooter>
