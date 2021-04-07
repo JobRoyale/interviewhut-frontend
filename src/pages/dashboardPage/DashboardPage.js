@@ -49,9 +49,9 @@ const DashboardPage = ({
     }
   };
 
-  // useEffect(() => {
-  //   preCheckUser(history);
-  // }, [preCheckUser, history]);
+  useEffect(() => {
+    preCheckUser(history);
+  }, [preCheckUser, history]);
 
   useEffect(() => {
     connectSocket();
