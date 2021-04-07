@@ -5,6 +5,7 @@ import {
   JOIN_ROOM_FAIL,
   ROOM_UPDATED,
   CHAT_SUCCESS,
+  CLOSE_ROOM_SUCCESS,
 } from './types';
 import { ERROR_MSG } from '../utils/constants';
 
@@ -43,9 +44,21 @@ export const closeRoom = (socket) => (dispatch) => {
   if (socket !== null) {
     socket.emit('CLOSE_ROOM', {}, (data) => {
       if (data !== null) {
-        if (data !== ERROR_MSG && data.error === undefined) {
-          console.log(data);
-        }
+        dispatch({
+          type: CLOSE_ROOM_SUCCESS,
+        });
+      }
+    });
+  }
+};
+
+export const roomClosed = (socket) => (dispatch) => {
+  if (socket !== null) {
+    socket.off('ROOM_CLOSED').on('ROOM_CLOSED', (data) => {
+      if (data !== null) {
+        dispatch({
+          type: CLOSE_ROOM_SUCCESS,
+        });
       }
     });
   }

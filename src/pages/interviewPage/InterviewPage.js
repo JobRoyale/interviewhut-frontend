@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
-import { closeRoom } from '../../actions/roomActions';
+import { closeRoom, roomClosed } from '../../actions/roomActions';
 import getUserData from '../../utils/getUserData';
 import {
   Text,
@@ -20,7 +20,7 @@ import { useHistory } from 'react-router-dom';
 import SlateEditor from '../../components/slateEditor/SlateEditor';
 import Timer from '../../components/timer/Timer';
 
-const InterviewPage = ({ socketData, roomData, closeRoom }) => {
+const InterviewPage = ({ socketData, roomData, closeRoom, roomClosed }) => {
   const socket = socketData.socket;
 
   const history = useHistory();
@@ -28,6 +28,10 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = React.useRef();
+
+  const [isCloseRoomOpen, setIsCloseRoomOpen] = useState(false);
+  const onCloseRoomClose = () => setIsCloseRoomOpen(false);
+  const cancelCloseRoomRef = React.useRef();
 
   // My details
   const myUsername = getUserData().username;
@@ -48,6 +52,16 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
   if (!socket) {
     history.push('/dashboard');
   }
+
+  if (!roomData.room) {
+    history.push('/dashboard');
+  }
+
+  useEffect(() => {
+    if (socket) {
+      roomClosed(socket);
+    }
+  }, [roomClosed, socket]);
 
   useEffect(() => {
     if (socket) {
@@ -126,15 +140,12 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
   };
 
   const handleEndInterview = () => {
-    // if (socket && connectionRef.current) {
-    //   leaveCall();
-    //   closeRoom(socket);
-    //   history.push('/dashboard');
-    // } else {
-    //   closeRoom(socket);
-    //   history.push('/dashboard');
-    // }
-    console.log('hello');
+    if (socket && connectionRef.current) {
+      leaveCall();
+      closeRoom(socket);
+    } else {
+      closeRoom(socket);
+    }
   };
 
   return (
@@ -209,7 +220,7 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
                 <Button
                   width="70%"
                   colorScheme="red"
-                  onClick={handleEndInterview}
+                  onClick={() => setIsCloseRoomOpen(true)}
                 >
                   End Interview
                 </Button>
@@ -244,6 +255,32 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
             ) : null}
           </div>
         </Flex>
+        <AlertDialog
+          isOpen={isCloseRoomOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onCloseRoomClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                End interview and close room
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onCloseRoomClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={handleEndInterview} ml={3}>
+                  Close Room
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Flex>
     </div>
   );
@@ -254,4 +291,6 @@ const mapStateToProps = (state) => ({
   roomData: state.roomData,
 });
 
-export default connect(mapStateToProps, { closeRoom })(InterviewPage);
+export default connect(mapStateToProps, { closeRoom, roomClosed })(
+  InterviewPage
+);

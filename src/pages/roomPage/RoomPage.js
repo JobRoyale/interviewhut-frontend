@@ -14,6 +14,12 @@ import {
   InputRightElement,
   useDisclosure,
   Tooltip,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import RoomMember from '../../components/roomMember/RoomMember';
 import Header from '../../components/header/Header';
@@ -22,6 +28,7 @@ import {
   startInterview,
   interviewStarted,
 } from '../../actions/interviewActions';
+import { closeRoom, roomClosed } from '../../actions/roomActions';
 import getUserData from '../../utils/getUserData';
 import { useHistory } from 'react-router-dom';
 import RoomChat from './RoomChat';
@@ -32,13 +39,19 @@ const RoomPage = ({
   interviewData,
   startInterview,
   interviewStarted,
+  closeRoom,
+  roomClosed,
 }) => {
   const [copied, setCopied] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory();
   const socket = socketData.socket;
   const username = getUserData().username;
-  const roomId = roomData.room.config.id;
+  const roomId = roomData.room ? roomData.room.config.id : null;
+
+  const [isAlertOpen, setAlertIsOpen] = React.useState(false);
+  const onAlertClose = () => setAlertIsOpen(false);
+  const cancelRef = React.useRef();
 
   let roomMemberCards = null;
   let roomMembers;
@@ -46,6 +59,16 @@ const RoomPage = ({
   if (!socket) {
     history.push('/dashboard');
   }
+
+  if (!roomData.room) {
+    history.push('/dashboard');
+  }
+
+  useEffect(() => {
+    if (socket) {
+      roomClosed(socket);
+    }
+  }, [socket, roomClosed]);
 
   useEffect(() => {
     if (socket) {
@@ -91,6 +114,10 @@ const RoomPage = ({
     }, 2000);
   };
 
+  const handleCloseRoom = () => {
+    closeRoom(socket);
+  };
+
   return (
     <div>
       <Header loggedIn={true} />
@@ -107,16 +134,34 @@ const RoomPage = ({
           alignItems="center"
         >
           <Flex>{roomMemberCards}</Flex>
-          {socket ? (
+          {socket && roomData.room ? (
             roomData.room.config.admin === username ? (
               <Stack width="100%" justifyContent="center" alignItems="center">
-                <Button width="40%" colorScheme="blue" onClick={onOpen}>
-                  Get Room Code
-                </Button>
+                <Flex justifyContent="space-evenly">
+                  <Button
+                    width="100%"
+                    colorScheme="blue"
+                    onClick={onOpen}
+                    marginRight="5px"
+                  >
+                    Get Room Code
+                  </Button>
+                  <Button
+                    width="100%"
+                    colorScheme="red"
+                    onClick={() => {
+                      setAlertIsOpen(true);
+                    }}
+                    marginLeft="5px"
+                  >
+                    Close Room
+                  </Button>
+                </Flex>
                 <Button
-                  width="40%"
-                  colorScheme="red"
+                  width="35%"
+                  colorScheme="green"
                   onClick={handleStartInterview}
+                  marginRight="5px"
                 >
                   Start Interview
                 </Button>
@@ -152,6 +197,32 @@ const RoomPage = ({
             </ModalBody>
           </ModalContent>
         </Modal>
+        <AlertDialog
+          isOpen={isAlertOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onAlertClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Close Room
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={handleCloseRoom} ml={3}>
+                  Close Room
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Flex>
     </div>
   );
@@ -163,6 +234,9 @@ const mapStateToProps = (state) => ({
   interviewData: state.interviewData,
 });
 
-export default connect(mapStateToProps, { startInterview, interviewStarted })(
-  RoomPage
-);
+export default connect(mapStateToProps, {
+  startInterview,
+  interviewStarted,
+  closeRoom,
+  roomClosed,
+})(RoomPage);

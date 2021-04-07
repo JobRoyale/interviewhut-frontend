@@ -30,9 +30,11 @@ const SlateEditor = ({ socketData }) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   useEffect(() => {
-    socket.on('RCV_MSG', (data) => {
-      setValue(data.content);
-    });
+    if (socket) {
+      socket.off('RCV_MSG').on('RCV_MSG', (data) => {
+        setValue(data.content);
+      });
+    }
   }, [socket]);
 
   const onChangeSlateEditor = (value) => {
