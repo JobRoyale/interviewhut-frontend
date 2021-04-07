@@ -12,6 +12,7 @@ import {
 } from 'react-icons/ai';
 import { BsCode } from 'react-icons/bs';
 import { connect } from 'react-redux';
+import './SlateEditor.css';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -29,9 +30,11 @@ const SlateEditor = ({ socketData }) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   useEffect(() => {
-    socket.on('RCV_MSG', (data) => {
-      setValue(data.content);
-    });
+    if (socket) {
+      socket.off('RCV_MSG').on('RCV_MSG', (data) => {
+        setValue(data.content);
+      });
+    }
   }, [socket]);
 
   const onChangeSlateEditor = (value) => {
@@ -54,6 +57,7 @@ const SlateEditor = ({ socketData }) => {
         <MarkButton format="code" icon={<Icon as={BsCode} />} />
       </Toolbar>
       <Editable
+        className="leaf-main"
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Interview text here..."

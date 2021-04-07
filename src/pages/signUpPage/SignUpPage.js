@@ -1,17 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Center,
-  Container,
-  Square,
-  Stack,
-  useToast,
-  Input,
-  FormControl,
-  FormLabel,
-  Button,
-  FormHelperText,
-} from '@chakra-ui/react';
-import GoogleAuth from '../../components/googleAuth/GoogleAuth';
+import React, { useEffect } from 'react';
+import { Flex, useToast } from '@chakra-ui/react';
 import { signUpUser, userActionReset } from '../../actions/userActions';
 import { connect } from 'react-redux';
 import {
@@ -22,19 +10,16 @@ import {
   ERRORTOKEN,
 } from '../../utils/constants';
 import { useHistory } from 'react-router-dom';
-import './SignUpPage.css';
+import SignUpLeftSection from './SignUpLeftSection';
+import SignUpRightSection from './SignUpRightSection';
 
 const SignUpPage = ({ userData, signUpUser, userActionReset }) => {
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
-  const [password, setPassword] = useState('');
-  const [authData, setAuthData] = useState({});
-  const [sendSignUpRequest, setSendSignUpRequest] = useState(false);
   const history = useHistory();
   const toast = useToast();
 
-  const signUpRequest = (authData) => {
-    setAuthData(authData);
-    setShowPasswordPrompt(true);
+  // Function for calling action that logs in user
+  const sendSignupRequest = (authData) => {
+    signUpUser(authData);
   };
 
   // Error handling
@@ -108,90 +93,15 @@ const SignUpPage = ({ userData, signUpUser, userActionReset }) => {
     }
   }, [userData.signUpData.data, history, userActionReset, toast]);
 
-  // Make the signup request to API
-  useEffect(() => {
-    if (sendSignUpRequest) {
-      signUpUser(authData);
-    }
-  }, [sendSignUpRequest, authData, signUpUser]);
-
-  let content = (
-    <Container>
-      <Container className="frontpage-body">
-        <Square bg="#ffffff" paddingX="100px" h="100vh">
-          <Center>
-            <Stack>
-              <center>
-                <h1 className="login-header-text">
-                  Register to use InterviewHut!
-                </h1>
-              </center>
-              <center>
-                <GoogleAuth
-                  text="Sign up with Google"
-                  getAuthData={signUpRequest}
-                />
-                <Container
-                  style={{ cursor: 'pointer' }}
-                  fontSize="16px"
-                  onClick={() => {
-                    history.push('/login');
-                  }}
-                >
-                  Already a member? Login
-                </Container>
-              </center>
-            </Stack>
-          </Center>
-        </Square>
-      </Container>
-    </Container>
+  return (
+    <Flex>
+      <SignUpLeftSection />
+      <SignUpRightSection
+        signUpLoading={userData.signUpData.isLoading}
+        sendSignupRequest={sendSignupRequest}
+      />
+    </Flex>
   );
-
-  if (showPasswordPrompt) {
-    content = (
-      <Container>
-        <Container className="frontpage-body">
-          <Square bg="#ffffff" paddingX="100px" h="100vh">
-            <Center>
-              <Stack>
-                <center>
-                  <FormControl id="email">
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                      type="password"
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                    />
-                    <FormHelperText>
-                      Make sure you give a strong password
-                    </FormHelperText>
-                    <Button
-                      mt={4}
-                      colorScheme="teal"
-                      onClick={() => {
-                        setAuthData((prevState) => ({
-                          ...prevState,
-                          password: password,
-                        }));
-                        setSendSignUpRequest(true);
-                      }}
-                      isLoading={userData.signUpData.isLoading}
-                    >
-                      Submit
-                    </Button>
-                  </FormControl>
-                </center>
-              </Stack>
-            </Center>
-          </Square>
-        </Container>
-      </Container>
-    );
-  }
-
-  return content;
 };
 
 const mapStateToProps = (state) => ({

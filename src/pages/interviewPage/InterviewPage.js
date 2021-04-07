@@ -2,10 +2,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
+import { closeRoom, roomClosed } from '../../actions/roomActions';
 import getUserData from '../../utils/getUserData';
-import { Button } from '@chakra-ui/button';
-import { Flex } from '@chakra-ui/layout';
 import {
+  Text,
+  Button,
+  Flex,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -14,14 +16,22 @@ import {
   AlertDialogOverlay,
 } from '@chakra-ui/react';
 import Header from '../../components/header/Header';
+import { useHistory } from 'react-router-dom';
 import SlateEditor from '../../components/slateEditor/SlateEditor';
+import Timer from '../../components/timer/Timer';
 
-const InterviewPage = ({ socketData, roomData }) => {
+const InterviewPage = ({ socketData, roomData, closeRoom, roomClosed }) => {
   const socket = socketData.socket;
+
+  const history = useHistory();
 
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = React.useRef();
+
+  const [isCloseRoomOpen, setIsCloseRoomOpen] = useState(false);
+  const onCloseRoomClose = () => setIsCloseRoomOpen(false);
+  const cancelCloseRoomRef = React.useRef();
 
   // My details
   const myUsername = getUserData().username;
@@ -39,24 +49,35 @@ const InterviewPage = ({ socketData, roomData }) => {
   const otherMemberVideo = useRef();
   const connectionRef = useRef();
 
+  if (!socket) {
+    history.push('/dashboard');
+  }
+
+  if (!roomData.room) {
+    history.push('/dashboard');
+  }
+
   useEffect(() => {
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: true, audio: true })
-    //   .then((stream) => {
-    //     setMyStream(stream);
-    //     myVideo.current.srcObject = stream;
-    //   });
-    // socket.off('callUser').on('callUser', (data) => {
-    //   setReceivingCall(true);
-    //   setCallerUsername(data.from);
-    //   setCallerSignal(data.signal);
-    //   setIsOpen(true);
-    // });
-    // socket.on('RCV_MSG', (data) => {
-    //   console.log(data);
-    //   console.log('recieved data:', data.content[0].children[0].text);
-    //   setValue(data.content);
-    // });
+    if (socket) {
+      roomClosed(socket);
+    }
+  }, [roomClosed, socket]);
+
+  useEffect(() => {
+    if (socket) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          setMyStream(stream);
+          myVideo.current.srcObject = stream;
+        });
+      socket.off('callUser').on('callUser', (data) => {
+        setReceivingCall(true);
+        setCallerUsername(data.from);
+        setCallerSignal(data.signal);
+        setIsOpen(true);
+      });
+    }
   }, [socket]);
 
   const callUser = (username) => {
@@ -118,14 +139,35 @@ const InterviewPage = ({ socketData, roomData }) => {
     }
   };
 
+  const handleEndInterview = () => {
+    if (socket && connectionRef.current) {
+      leaveCall();
+      closeRoom(socket);
+    } else {
+      closeRoom(socket);
+    }
+  };
+
   return (
-    <Flex flexDirection="column" h="100vh">
-      <Header />
-      <Flex>
-        <Flex height="100%" width="80%" flexDirection="column">
-          <SlateEditor />
+    <div>
+      <Header loggedIn={true} />
+      <Flex h="91vh" bgColor="#dde5eb">
+        <Flex
+          height="100%"
+          width="80%"
+          flexDirection="column"
+          bgColor="#dde5eb"
+          padding="30px"
+        >
+          <Flex flexDirection="column" bgColor="white" height="100%">
+            <SlateEditor />
+          </Flex>
         </Flex>
         <Flex height="100%" width="20%" flexDirection="column">
+          <Flex flexDirection="column" padding="10px">
+            <Text fontSize="md">Time left for interview</Text>
+            <Timer milliseconds="2700000" />
+          </Flex>
           <Flex width="100%">
             {myStream && (
               <video
@@ -137,17 +179,25 @@ const InterviewPage = ({ socketData, roomData }) => {
               />
             )}
           </Flex>
-          {'joelmathewkoshy' === myUsername && !callAccepted && !callEnded ? (
-            <Flex
-              width="100%"
-              padding="10px"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Button width="50%" onClick={handleStartVideoCall}>
-                Start video call
-              </Button>
-            </Flex>
+          {roomData.room ? (
+            roomData.room.config.admin === myUsername &&
+            !callAccepted &&
+            !callEnded ? (
+              <Flex
+                width="100%"
+                padding="5px"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Button
+                  width="70%"
+                  onClick={handleStartVideoCall}
+                  colorScheme="blue"
+                >
+                  Start video call
+                </Button>
+              </Flex>
+            ) : null
           ) : null}
           <Flex>
             {callAccepted && !callEnded ? (
@@ -159,6 +209,24 @@ const InterviewPage = ({ socketData, roomData }) => {
               />
             ) : null}
           </Flex>
+          {roomData.room ? (
+            roomData.room.config.admin === myUsername ? (
+              <Flex
+                width="100%"
+                padding="5px"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Button
+                  width="70%"
+                  colorScheme="red"
+                  onClick={() => setIsCloseRoomOpen(true)}
+                >
+                  End Interview
+                </Button>
+              </Flex>
+            ) : null
+          ) : null}
           <div>
             {receivingCall && !callAccepted ? (
               <AlertDialog
@@ -187,8 +255,34 @@ const InterviewPage = ({ socketData, roomData }) => {
             ) : null}
           </div>
         </Flex>
+        <AlertDialog
+          isOpen={isCloseRoomOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onCloseRoomClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                End interview and close room
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onCloseRoomClose}>
+                  Cancel
+                </Button>
+                <Button colorScheme="red" onClick={handleEndInterview} ml={3}>
+                  End Interview
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Flex>
-    </Flex>
+    </div>
   );
 };
 
@@ -197,4 +291,6 @@ const mapStateToProps = (state) => ({
   roomData: state.roomData,
 });
 
-export default connect(mapStateToProps, {})(InterviewPage);
+export default connect(mapStateToProps, { closeRoom, roomClosed })(
+  InterviewPage
+);

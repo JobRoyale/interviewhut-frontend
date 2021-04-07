@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { Center, Container, Square, Stack, useToast } from '@chakra-ui/react';
-import GoogleAuth from '../../components/googleAuth/GoogleAuth';
+import { Flex, useToast } from '@chakra-ui/react';
 import { loginUser, userActionReset } from '../../actions/userActions';
 import { connect } from 'react-redux';
 import {
@@ -11,13 +10,14 @@ import {
   INVALID,
 } from '../../utils/constants';
 import { useHistory } from 'react-router-dom';
-import './LoginPage.css';
+import LoginLeftSection from './LoginLeftSection';
+import LoginRightSection from './LoginRightSection';
 
 const LoginPage = ({ userData, loginUser, userActionReset }) => {
   const history = useHistory();
   const toast = useToast();
 
-  const loginRequest = (authData) => {
+  const sendLoginRequest = (authData) => {
     loginUser(authData);
   };
 
@@ -91,36 +91,13 @@ const LoginPage = ({ userData, loginUser, userActionReset }) => {
   }, [userData.loginData.data, history, toast]);
 
   return (
-    <Container>
-      <Container className="frontpage-body">
-        <Square bg="#ffffff" paddingX="100px" h="100vh">
-          <Center>
-            <Stack>
-              <center>
-                <h1 className="login-header-text">
-                  Login to use InterviewHut!
-                </h1>
-              </center>
-              <center>
-                <GoogleAuth
-                  text="Login with Google"
-                  getAuthData={loginRequest}
-                />
-                <Container
-                  style={{ cursor: 'pointer' }}
-                  fontSize="16px"
-                  onClick={() => {
-                    history.push('/signup');
-                  }}
-                >
-                  New to InterviewHut? Register Now
-                </Container>
-              </center>
-            </Stack>
-          </Center>
-        </Square>
-      </Container>
-    </Container>
+    <Flex>
+      <LoginLeftSection />
+      <LoginRightSection
+        loginLoading={userData.loginData.isLoading}
+        sendLoginRequest={sendLoginRequest}
+      />
+    </Flex>
   );
 };
 

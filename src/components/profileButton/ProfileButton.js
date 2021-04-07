@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Popover,
   PopoverTrigger,
@@ -12,10 +12,27 @@ import {
   Image,
 } from '@chakra-ui/react';
 import getUserData from '../../utils/getUserData';
+import { connect } from 'react-redux';
+import { logoutUser, userActionReset } from '../../actions/userActions';
+import { useHistory } from 'react-router-dom';
+import { LOGOUT } from '../../utils/constants';
 
-const ProfileButton = () => {
+const ProfileButton = ({ userData, logoutUser, userActionReset }) => {
+  const history = useHistory();
   const user = getUserData();
   const fullname = `${user.firstname} ${user.lastname}`;
+
+  // When logout is successfull
+  useEffect(() => {
+    if (userData.logoutData.data) {
+      if (userData.logoutData.data.payload.message === LOGOUT) {
+        userActionReset();
+        localStorage.removeItem('token');
+        history.push('/');
+      }
+    }
+  }, [userData.logoutData.data, userActionReset, history]);
+
   return (
     <Popover>
       <PopoverTrigger>
@@ -40,10 +57,12 @@ const ProfileButton = () => {
               {user.username}
             </Text>
           </Flex>
-          <Button colorScheme="teal" variant="ghost" w="100%">
-            Settings
-          </Button>
-          <Button colorScheme="red" variant="ghost" w="100%">
+          <Button
+            colorScheme="red"
+            variant="ghost"
+            w="100%"
+            onClick={() => logoutUser(history)}
+          >
             Logout
           </Button>
         </PopoverBody>
@@ -52,4 +71,10 @@ const ProfileButton = () => {
   );
 };
 
-export default ProfileButton;
+const mapStateToProps = (state) => ({
+  userData: state.userData,
+});
+
+export default connect(mapStateToProps, { logoutUser, userActionReset })(
+  ProfileButton
+);

@@ -1,23 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Flex, Button, Text, Input } from '@chakra-ui/react';
+import {
+  Image,
+  Flex,
+  Button,
+  Text,
+  Input,
+  Stack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Spinner,
+} from '@chakra-ui/react';
 import { connect } from 'react-redux';
+import { preCheckUser } from '../../actions/userActions';
 import { connectSocket } from '../../actions/socketActions';
 import { createRoom, joinRoom } from '../../actions/roomActions';
 import { useHistory } from 'react-router-dom';
+import Header from '../../components/header/Header';
+import interview from '../../assets/interview.svg';
 
 const DashboardPage = ({
+  preCheckUser,
   connectSocket,
   createRoom,
   joinRoom,
   socketData,
   roomData,
+  userData,
 }) => {
   const history = useHistory();
   const socket = socketData.socket;
   const [roomId, setRoomId] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const onClickHandler = () => {
-    console.log('onclick');
+  const onCreateRoomHandler = () => {
     createRoom(socket);
   };
 
@@ -27,6 +48,10 @@ const DashboardPage = ({
       setRoomId('');
     }
   };
+
+  // useEffect(() => {
+  //   preCheckUser(history);
+  // }, [preCheckUser, history]);
 
   useEffect(() => {
     connectSocket();
@@ -38,65 +63,75 @@ const DashboardPage = ({
     }
   }, [roomData, history]);
 
-  return (
+  let content = (
     <div>
-      <div className="frontpage-header">
-        <Box bg="#11143C" w="100%" h="10vh" paddingTop="30px" color="white">
-          <Flex paddingX="30px">
-            <Container flex="21" fontSize="25px">
-              <div>InterviewHut</div>
-            </Container>
-            <Container flex="2">
-              <div>About us</div>
-            </Container>
-            <Container flex="2">
-              <div>Contact us</div>
-            </Container>
-            <Container flex="1">
-              <div>{/* image here */}</div>
-            </Container>
-          </Flex>
-        </Box>
-      </div>
-      <div className="frontpage-body">
-        <Flex bg="#4C96EB" paddingX="100px" h="90vh">
-          <Container flex="2" paddingTop="230px">
-            <Text fontSize="2xl">
-              Choose this option for a custom interview where you can decide who
-              do you want to be interviewed by.
-            </Text>
-            <Container h="5vh"></Container>
-            <Button onClick={onClickHandler}>CUSTOM INTERVIEW</Button>
-            <Input
-              placeholder="Join Room"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              onKeyPress={joinRoomHandler}
-            />
-          </Container>
+      <Header loggedIn={true} />
+      <Flex bg="#dde5eb" h="91vh" alignItems="center" justifyContent="center">
+        <Stack align="center" boxSize="45%" marginRight="50px">
+          <Text fontSize="2xl">
+            Ace your interviews today! Create a room, invite an interviewer to
+            join and conduct a mock interview!
+          </Text>
+          <Input
+            placeholder="Join an interview room with a room code"
+            borderColor="#4C96EB"
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            onKeyPress={joinRoomHandler}
+          />
+          <Text fontSize="lg">Or</Text>
+          <Button onClick={onOpen} colorScheme="blue">
+            Create an interview room
+          </Button>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Create an interview room</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                By creating a mock interview room you will be able to invite an
+                interviewer or friend to join as an interviewer to conduct a
+                mock interview.
+              </ModalBody>
 
-          <Container flex="1" />
-
-          <Container flex="2" paddingTop="230px">
-            <Text fontSize="2xl">
-              Choose this option for a random interview where you will be
-              assigned to random person who will interview you.
-            </Text>
-            <Container h="5vh"></Container>
-            <Button>RANDOM INTERVIEW</Button>
-          </Container>
-        </Flex>
-      </div>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={onCreateRoomHandler}>
+                  Create Room
+                </Button>
+                <Button variant="ghost" onClick={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Stack>
+        <Image
+          marginLeft="50px"
+          boxSize="450px"
+          src={interview}
+          alt="interview"
+        ></Image>
+      </Flex>
     </div>
   );
+
+  if (userData.preCheckData.isLoading) {
+    <Flex>
+      <Spinner color="blue" />
+    </Flex>;
+  }
+
+  return content;
 };
 
 const mapStateToProps = (state) => ({
+  userData: state.userData,
   socketData: state.socketData,
   roomData: state.roomData,
 });
 
 export default connect(mapStateToProps, {
+  preCheckUser,
   connectSocket,
   createRoom,
   joinRoom,
