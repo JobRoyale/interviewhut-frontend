@@ -39,6 +39,18 @@ export const createRoom = (socket) => (dispatch) => {
   }
 };
 
+export const closeRoom = (socket) => (dispatch) => {
+  if (socket !== null) {
+    socket.emit('CLOSE_ROOM', {}, (data) => {
+      if (data !== null) {
+        if (data !== ERROR_MSG && data.error === undefined) {
+          console.log('Close Room', data);
+        }
+      }
+    });
+  }
+};
+
 export const joinRoom = (socket, room_id) => (dispatch) => {
   if (socket !== null) {
     socket.emit('JOIN_ROOM', { room_id }, (joinRoomData) => {

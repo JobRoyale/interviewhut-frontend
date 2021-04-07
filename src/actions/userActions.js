@@ -5,9 +5,13 @@ import {
   SIGNUP_LOADING,
   SIGNUP_SUCCESS,
   SIGNUP_FAIL,
+  PRECHECK_LOADING,
+  PRECHECK_SUCCESS,
+  PRECHECK_FAIL,
   ACTION_RESET,
 } from './types';
 import loggedOutAxios from '../helpers/loggedOutAxios';
+import loggedInAxios from '../helpers/loggedInAxios';
 import { SERVER_DOWN } from '../utils/constants';
 
 export const userActionReset = () => {
@@ -62,6 +66,24 @@ export const signUpUser = (authData) => (dispatch) => {
     .catch((error) => {
       dispatch({
         type: SIGNUP_FAIL,
+        payload: error.response ? error.response.data : SERVER_DOWN,
+      });
+    });
+};
+
+// Precheck user
+export const preCheckUser = (history) => (dispatch) => {
+  dispatch({ type: PRECHECK_LOADING });
+
+  loggedInAxios(history)
+    .get('/users/precheck')
+    .then((response) => {
+      localStorage.token = response.data.payload.accessToken;
+      dispatch({ type: PRECHECK_SUCCESS, payload: response.data });
+    })
+    .catch((error) => {
+      dispatch({
+        type: PRECHECK_FAIL,
         payload: error.response ? error.response.data : SERVER_DOWN,
       });
     });

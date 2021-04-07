@@ -14,8 +14,10 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Spinner,
 } from '@chakra-ui/react';
 import { connect } from 'react-redux';
+import { preCheckUser } from '../../actions/userActions';
 import { connectSocket } from '../../actions/socketActions';
 import { createRoom, joinRoom } from '../../actions/roomActions';
 import { useHistory } from 'react-router-dom';
@@ -23,11 +25,13 @@ import Header from '../../components/header/Header';
 import interview from '../../assets/interview.svg';
 
 const DashboardPage = ({
+  preCheckUser,
   connectSocket,
   createRoom,
   joinRoom,
   socketData,
   roomData,
+  userData,
 }) => {
   const history = useHistory();
   const socket = socketData.socket;
@@ -45,6 +49,10 @@ const DashboardPage = ({
     }
   };
 
+  // useEffect(() => {
+  //   preCheckUser(history);
+  // }, [preCheckUser, history]);
+
   useEffect(() => {
     connectSocket();
   }, [connectSocket]);
@@ -55,7 +63,7 @@ const DashboardPage = ({
     }
   }, [roomData, history]);
 
-  return (
+  let content = (
     <div>
       <Header loggedIn={true} />
       <Flex bg="#dde5eb" h="91vh" alignItems="center" justifyContent="center">
@@ -106,14 +114,24 @@ const DashboardPage = ({
       </Flex>
     </div>
   );
+
+  if (userData.preCheckData.isLoading) {
+    <Flex>
+      <Spinner color="blue" />
+    </Flex>;
+  }
+
+  return content;
 };
 
 const mapStateToProps = (state) => ({
+  userData: state.userData,
   socketData: state.socketData,
   roomData: state.roomData,
 });
 
 export default connect(mapStateToProps, {
+  preCheckUser,
   connectSocket,
   createRoom,
   joinRoom,

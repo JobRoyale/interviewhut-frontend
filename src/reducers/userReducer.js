@@ -6,6 +6,9 @@ import {
   SIGNUP_LOADING,
   SIGNUP_SUCCESS,
   SIGNUP_FAIL,
+  PRECHECK_LOADING,
+  PRECHECK_SUCCESS,
+  PRECHECK_FAIL,
 } from '../actions/types';
 
 const initialState = {
@@ -13,6 +16,9 @@ const initialState = {
     isLoading: false,
   },
   signUpData: {
+    isLoading: false,
+  },
+  preCheckData: {
     isLoading: false,
   },
 };
@@ -69,9 +75,39 @@ const userReducer = (state = initialState, action) => {
         },
       };
     }
+    case PRECHECK_LOADING:
+      return {
+        ...state,
+        preCheckData: {
+          error: false,
+          isLoading: true,
+        },
+      };
+    case PRECHECK_SUCCESS: {
+      return {
+        ...state,
+        preCheckData: {
+          isLoading: false,
+          data: action.payload,
+        },
+      };
+    }
+    case PRECHECK_FAIL: {
+      return {
+        ...state,
+        preCheckData: {
+          isLoading: false,
+          error: action.payload,
+        },
+      };
+    }
     case ACTION_RESET:
       return {
         ...state,
+        preCheckData: {
+          error: false,
+          data: false,
+        },
         loginData: {
           error: false,
           data: false,

@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Peer from 'simple-peer';
 import { connect } from 'react-redux';
+import { closeRoom } from '../../actions/roomActions';
 import getUserData from '../../utils/getUserData';
 import {
   Text,
@@ -19,7 +20,7 @@ import { useHistory } from 'react-router-dom';
 import SlateEditor from '../../components/slateEditor/SlateEditor';
 import Timer from '../../components/timer/Timer';
 
-const InterviewPage = ({ socketData, roomData }) => {
+const InterviewPage = ({ socketData, roomData, closeRoom }) => {
   const socket = socketData.socket;
 
   const history = useHistory();
@@ -124,6 +125,12 @@ const InterviewPage = ({ socketData, roomData }) => {
     }
   };
 
+  const handleEndInterview = () => {
+    if (socket) {
+      closeRoom(socket);
+    }
+  };
+
   return (
     <div>
       <Header loggedIn={true} />
@@ -190,7 +197,11 @@ const InterviewPage = ({ socketData, roomData }) => {
               alignItems="center"
               justifyContent="center"
             >
-              <Button width="70%" colorScheme="red">
+              <Button
+                width="70%"
+                colorScheme="red"
+                onClick={handleEndInterview}
+              >
                 End Interview
               </Button>
             </Flex>
@@ -233,4 +244,4 @@ const mapStateToProps = (state) => ({
   roomData: state.roomData,
 });
 
-export default connect(mapStateToProps, {})(InterviewPage);
+export default connect(mapStateToProps, { closeRoom })(InterviewPage);
