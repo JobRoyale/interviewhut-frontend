@@ -13,6 +13,11 @@ export const PRECHECK_LOADING = 'PRECHECK_LOADING';
 export const PRECHECK_SUCCESS = 'PRECHECK_SUCCESS';
 export const PRECHECK_FAIL = 'PRECHECK_FAIL';
 
+// Logout Actions
+export const LOGOUT_LOADING = 'LOGOUT_LOADING';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_FAIL = 'LOGOUT_FAIL';
+
 // Room Actions
 export const CREATE_ROOM_SUCCESS = 'CREATE_ROOM_SUCCESS';
 export const CREATE_ROOM_FAIL = 'CREATE_ROOM_FAIL';

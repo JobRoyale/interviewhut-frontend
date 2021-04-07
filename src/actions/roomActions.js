@@ -44,7 +44,7 @@ export const closeRoom = (socket) => (dispatch) => {
     socket.emit('CLOSE_ROOM', {}, (data) => {
       if (data !== null) {
         if (data !== ERROR_MSG && data.error === undefined) {
-          console.log('Close Room', data);
+          console.log(data);
         }
       }
     });

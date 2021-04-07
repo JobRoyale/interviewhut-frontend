@@ -126,9 +126,15 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
   };
 
   const handleEndInterview = () => {
-    if (socket) {
-      closeRoom(socket);
-    }
+    // if (socket && connectionRef.current) {
+    //   leaveCall();
+    //   closeRoom(socket);
+    //   history.push('/dashboard');
+    // } else {
+    //   closeRoom(socket);
+    //   history.push('/dashboard');
+    // }
+    console.log('hello');
   };
 
   return (
@@ -162,23 +168,25 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
               />
             )}
           </Flex>
-          {roomData.room.config.admin === myUsername &&
-          !callAccepted &&
-          !callEnded ? (
-            <Flex
-              width="100%"
-              padding="5px"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Button
-                width="70%"
-                onClick={handleStartVideoCall}
-                colorScheme="blue"
+          {roomData.room ? (
+            roomData.room.config.admin === myUsername &&
+            !callAccepted &&
+            !callEnded ? (
+              <Flex
+                width="100%"
+                padding="5px"
+                alignItems="center"
+                justifyContent="center"
               >
-                Start video call
-              </Button>
-            </Flex>
+                <Button
+                  width="70%"
+                  onClick={handleStartVideoCall}
+                  colorScheme="blue"
+                >
+                  Start video call
+                </Button>
+              </Flex>
+            ) : null
           ) : null}
           <Flex>
             {callAccepted && !callEnded ? (
@@ -190,21 +198,23 @@ const InterviewPage = ({ socketData, roomData, closeRoom }) => {
               />
             ) : null}
           </Flex>
-          {roomData.room.config.admin === myUsername ? (
-            <Flex
-              width="100%"
-              padding="5px"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Button
-                width="70%"
-                colorScheme="red"
-                onClick={handleEndInterview}
+          {roomData.room ? (
+            roomData.room.config.admin === myUsername ? (
+              <Flex
+                width="100%"
+                padding="5px"
+                alignItems="center"
+                justifyContent="center"
               >
-                End Interview
-              </Button>
-            </Flex>
+                <Button
+                  width="70%"
+                  colorScheme="red"
+                  onClick={handleEndInterview}
+                >
+                  End Interview
+                </Button>
+              </Flex>
+            ) : null
           ) : null}
           <div>
             {receivingCall && !callAccepted ? (
