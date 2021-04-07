@@ -275,7 +275,7 @@ const InterviewPage = ({ socketData, roomData, closeRoom, roomClosed }) => {
                   Cancel
                 </Button>
                 <Button colorScheme="red" onClick={handleEndInterview} ml={3}>
-                  Close Room
+                  End Interview
                 </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
